@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotworx 6-Week Program</title>
+    <title>Hotworx Weekly Planner</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -15,7 +15,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Icons
         const Calendar = ({ size = 24 }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -31,374 +30,135 @@
             </svg>
         );
 
-        const Edit2 = ({ size = 24 }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-            </svg>
-        );
-
-        const RotateCw = ({ size = 24 }) => (
+        const RefreshCw = ({ size = 24 }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="23 4 23 10 17 10"></polyline>
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
             </svg>
         );
 
-        const Plus = ({ size = 24 }) => (
+        const Edit = ({ size = 24 }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        );
-
-        const X = ({ size = 24 }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        );
-
-        const TrendingUp = ({ size = 24 }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                <polyline points="17 6 23 6 23 12"></polyline>
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
         );
 
         const HotworxPlanner = () => {
-            const defaultProgram = {
-                weekA: {
-                    name: "Week A: Upper/Lower Split",
-                    monday: { sessions: ["Hot Cycle (15 min HIIT)", "Hot Buns (30 min)"], focus: "Lower body & cardio", completed: false },
-                    tuesday: { sessions: ["Hot Bands (30 min)", "Hot Core - first half (15 min)"], focus: "Upper body & core", completed: false },
-                    wednesday: { sessions: ["Hot Stretch (30 min) or Rest"], focus: "Active recovery", completed: false },
-                    thursday: { sessions: ["Hot Thunder (15 min HIIT)", "Hot Warrior (30 min)"], focus: "Full body & cardio", completed: false },
-                    friday: { sessions: ["Hot Barre None (30 min)", "Hot Core - second half (15 min)"], focus: "Lower body & recovery", completed: false },
-                    saturday: { sessions: ["Rest"], focus: "Complete rest", completed: false },
-                    sunday: { sessions: ["Rest"], focus: "Complete rest", completed: false }
+            const workoutOptions = {
+                fullBody: [
+                    "Hot Warrior (30 min)",
+                    "Hot ISO (30 min)",
+                    "Hot Blast (15 min HIIT)"
+                ],
+                lowerBody: [
+                    "Hot Buns (30 min)",
+                    "Hot Cycle (15 min HIIT)",
+                    "Hot Barre None (30 min)"
+                ],
+                upperBody: [
+                    "Hot Bands (30 min)",
+                    "Hot Thunder (15 min HIIT)"
+                ],
+                core: [
+                    "Hot Core (30 min)",
+                    "Hot Pilates (30 min)"
+                ],
+                flexibility: [
+                    "Hot Yoga (30 min)",
+                    "Hot Stretch (30 min)",
+                    "Rest"
+                ]
+            };
+
+            const defaultWeek = {
+                monday: { 
+                    category: "fullBody", 
+                    workout: "Hot Warrior (30 min)", 
+                    custom: "",
+                    completed: false 
                 },
-                weekB: {
-                    name: "Week B: Push/Pull/Legs",
-                    monday: { sessions: ["Hot Thunder (15 min)", "Hot ISO (30 min)"], focus: "Pull & cardio", completed: false },
-                    tuesday: { sessions: ["Hot Bands (30 min)", "Hot Pilates (30 min)"], focus: "Push & core", completed: false },
-                    wednesday: { sessions: ["Hot Yoga (30 min)"], focus: "Active recovery", completed: false },
-                    thursday: { sessions: ["Hot Buns (30 min)", "Hot Core (30 min)"], focus: "Legs & core", completed: false },
-                    friday: { sessions: ["Hot Blast (15 min)", "Hot Warrior (30 min)"], focus: "Full body HIIT", completed: false },
-                    saturday: { sessions: ["Rest"], focus: "Complete rest", completed: false },
-                    sunday: { sessions: ["Rest"], focus: "Complete rest", completed: false }
+                tuesday: { 
+                    category: "lowerBody", 
+                    workout: "Hot Buns (30 min)", 
+                    custom: "",
+                    completed: false 
                 },
-                weekC: {
-                    name: "Week C: High Variety",
-                    monday: { sessions: ["Hot Cycle (15 min)", "Hot Barre None (30 min)"], focus: "Lower body & cardio", completed: false },
-                    tuesday: { sessions: ["Hot Stretch (30 min) or Rest"], focus: "Recovery", completed: false },
-                    wednesday: { sessions: ["Hot Bands (30 min)", "Hot Thunder (15 min)"], focus: "Upper body emphasis", completed: false },
-                    thursday: { sessions: ["Hot Pilates (30 min)", "Hot Yoga (30 min)"], focus: "Core & mind-body", completed: false },
-                    friday: { sessions: ["Hot Buns (30 min)", "Hot ISO (30 min)"], focus: "Legs & full body", completed: false },
-                    saturday: { sessions: ["Hot Blast (15 min)", "Hot Core (30 min)"], focus: "HIIT & recovery", completed: false },
-                    sunday: { sessions: ["Rest"], focus: "Complete rest", completed: false }
+                wednesday: { 
+                    category: "flexibility", 
+                    workout: "Hot Yoga (30 min)", 
+                    custom: "",
+                    completed: false 
                 },
-                deload: {
-                    name: "Deload Week: Recovery & Restoration",
-                    monday: { sessions: ["Hot Yoga (30 min)"], focus: "Gentle movement & flexibility", completed: false },
-                    tuesday: { sessions: ["Rest"], focus: "Complete rest", completed: false },
-                    wednesday: { sessions: ["Hot Stretch (30 min)"], focus: "Deep stretching & recovery", completed: false },
-                    thursday: { sessions: ["Rest"], focus: "Complete rest", completed: false },
-                    friday: { sessions: ["Hot ISO (30 min)"], focus: "Light strength maintenance", completed: false },
-                    saturday: { sessions: ["Rest"], focus: "Complete rest", completed: false },
-                    sunday: { sessions: ["Rest"], focus: "Complete rest", completed: false }
+                thursday: { 
+                    category: "upperBody", 
+                    workout: "Hot Bands (30 min)", 
+                    custom: "",
+                    completed: false 
+                },
+                friday: { 
+                    category: "core", 
+                    workout: "Hot Pilates (30 min)", 
+                    custom: "",
+                    completed: false 
+                },
+                saturday: { 
+                    category: "fullBody", 
+                    workout: "Hot ISO (30 min)", 
+                    custom: "",
+                    completed: false 
+                },
+                sunday: { 
+                    category: "flexibility", 
+                    workout: "Rest", 
+                    custom: "",
+                    completed: false 
                 }
             };
 
             const loadData = () => {
-                const saved = localStorage.getItem('hotworx_data');
-                if (saved) {
-                    return JSON.parse(saved);
-                }
-                return {
-                    weekNumber: 1,
-                    program: defaultProgram,
-                    history: []
-                };
+                const saved = localStorage.getItem('hotworx_weekly');
+                return saved ? JSON.parse(saved) : defaultWeek;
             };
 
-            const [data, setData] = useState(loadData());
+            const [week, setWeek] = useState(loadData());
             const [editingDay, setEditingDay] = useState(null);
 
             useEffect(() => {
-                localStorage.setItem('hotworx_data', JSON.stringify(data));
-            }, [data]);
+                localStorage.setItem('hotworx_weekly', JSON.stringify(week));
+            }, [week]);
 
             const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
             const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-            const getCurrentTemplate = () => {
-                if (data.weekNumber === 7) return 'deload';
-                if (data.weekNumber <= 2) return 'weekA';
-                if (data.weekNumber <= 4) return 'weekB';
-                return 'weekC';
+            const categoryLabels = {
+                fullBody: "Full Body Strength",
+                lowerBody: "Lower Body Focus",
+                upperBody: "Upper Body Focus",
+                core: "Core Work",
+                flexibility: "Flexibility/Balance"
             };
-
-            const currentTemplate = getCurrentTemplate();
-            const currentWeek = data.program[currentTemplate];
 
             const toggleComplete = (day) => {
-                setData(prev => {
-                    const newData = { ...prev };
-                    newData.program[currentTemplate][day].completed = !newData.program[currentTemplate][day].completed;
-                    return newData;
-                });
+                setWeek(prev => ({
+                    ...prev,
+                    [day]: { ...prev[day], completed: !prev[day].completed }
+                }));
             };
 
-            const advanceWeek = () => {
-                const completedDays = days.filter(day => currentWeek[day].completed).length;
-                
-                setData(prev => {
-                    const newData = { ...prev };
-                    newData.history.push({
-                        weekNumber: prev.weekNumber,
-                        template: currentTemplate,
-                        completedDays,
-                        totalDays: 7
-                    });
-                    
-                    days.forEach(day => {
-                        newData.program[currentTemplate][day].completed = false;
-                    });
-                    
-                    newData.weekNumber = prev.weekNumber === 7 ? 1 : prev.weekNumber + 1;
-                    return newData;
-                });
+            const changeWorkout = (day, newWorkout) => {
+                setWeek(prev => ({
+                    ...prev,
+                    [day]: { ...prev[day], workout: newWorkout }
+                }));
             };
 
-            const saveEdit = (day, sessions, focus) => {
-                setData(prev => {
-                    const newData = { ...prev };
-                    newData.program[currentTemplate][day].sessions = sessions;
-                    newData.program[currentTemplate][day].focus = focus;
-                    return newData;
-                });
-                setEditingDay(null);
+            const updateCustom = (day, value) => {
+                setWeek(prev => ({
+                    ...prev,
+                    [day]: { ...prev[day], custom: value }
+                }));
             };
 
-            const DayEditor = ({ day, dayName, dayData }) => {
-                const [sessions, setSessions] = useState([...dayData.sessions]);
-                const [focus, setFocus] = useState(dayData.focus);
-
-                return (
-                    <div className="bg-white p-4 rounded-lg shadow-md border-2 border-orange-500">
-                        <div className="flex justify-between items-center mb-3">
-                            <h3 className="font-bold text-lg">{dayName}</h3>
-                            <button
-                                onClick={() => saveEdit(day, sessions, focus)}
-                                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                            >
-                                Save
-                            </button>
-                        </div>
-                        
-                        <div className="space-y-2 mb-3">
-                            {sessions.map((session, idx) => (
-                                <div key={idx} className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={session}
-                                        onChange={(e) => {
-                                            const newSessions = [...sessions];
-                                            newSessions[idx] = e.target.value;
-                                            setSessions(newSessions);
-                                        }}
-                                        className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm"
-                                    />
-                                    {sessions.length > 1 && (
-                                        <button
-                                            onClick={() => setSessions(sessions.filter((_, i) => i !== idx))}
-                                            className="text-red-500"
-                                        >
-                                            <X size={20} />
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-
-                        <button
-                            onClick={() => setSessions([...sessions, ""])}
-                            className="flex items-center gap-1 text-blue-500 text-sm mb-3"
-                        >
-                            <Plus size={16} /> Add Session
-                        </button>
-
-                        <input
-                            type="text"
-                            value={focus}
-                            onChange={(e) => setFocus(e.target.value)}
-                            className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                        />
-                    </div>
-                );
-            };
-
-            const DayCard = ({ day, dayName, dayData }) => {
-                if (editingDay === day) {
-                    return <DayEditor day={day} dayName={dayName} dayData={dayData} />;
-                }
-
-                return (
-                    <div className={`bg-white p-4 rounded-lg shadow-md ${dayData.completed ? 'border-2 border-green-500' : 'border border-gray-200'}`}>
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-bold text-lg">{dayName}</h3>
-                            <div className="flex gap-2">
-                                <button onClick={() => setEditingDay(day)} className="text-gray-500 hover:text-blue-500">
-                                    <Edit2 size={16} />
-                                </button>
-                                <button
-                                    onClick={() => toggleComplete(day)}
-                                    className={dayData.completed ? 'text-green-500' : 'text-gray-300'}
-                                >
-                                    <Check size={20} />
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div className="space-y-1 mb-2">
-                            {dayData.sessions.map((session, idx) => (
-                                <div key={idx} className="text-sm text-gray-700">• {session}</div>
-                            ))}
-                        </div>
-                        
-                        <div className="text-xs text-gray-500 italic mt-2 pt-2 border-t">
-                            {dayData.focus}
-                        </div>
-                    </div>
-                );
-            };
-
-            const completedDays = days.filter(day => currentWeek[day].completed).length;
-            const isDeloadWeek = data.weekNumber === 7;
-
-            return (
-                <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 p-4">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <Calendar size={32} />
-                                    <div>
-                                        <h1 className="text-3xl font-bold text-gray-800">Hotworx 6-Week Program</h1>
-                                        <p className="text-gray-600">{currentWeek.name}</p>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            {isDeloadWeek ? (
-                                                <span className="text-blue-600 font-semibold">🌟 Deload Week - Recovery!</span>
-                                            ) : (
-                                                <span>Week {data.weekNumber} of 6</span>
-                                            )}
-                                        </p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={advanceWeek}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white ${
-                                        isDeloadWeek ? 'bg-blue-500 hover:bg-blue-600' : 'bg-orange-500 hover:bg-orange-600'
-                                    }`}
-                                >
-                                    <RotateCw size={20} />
-                                    {isDeloadWeek ? 'Start New Cycle' : 'Next Week'}
-                                </button>
-                            </div>
-
-                            <div className="mt-4 mb-4">
-                                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                    <span>Cycle Progress</span>
-                                    <span>Week {data.weekNumber} of 7</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-3">
-                                    <div
-                                        className={`h-3 rounded-full ${isDeloadWeek ? 'bg-blue-500' : 'bg-orange-500'}`}
-                                        style={{ width: `${((data.weekNumber - 1) / 7) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="mt-4">
-                                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                    <span>This Week</span>
-                                    <span>{completedDays} / 7 days</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-3">
-                                    <div
-                                        className="bg-green-500 h-3 rounded-full"
-                                        style={{ width: `${(completedDays / 7) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {isDeloadWeek && (
-                            <div className="mb-6 bg-blue-100 border-2 border-blue-400 rounded-lg p-4">
-                                <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
-                                    <TrendingUp size={20} />
-                                    Deload Week
-                                </h3>
-                                <ul className="text-sm text-blue-800 space-y-1">
-                                    <li>• Only 2-3 gentle sessions</li>
-                                    <li>• No HIIT or intense workouts</li>
-                                    <li>• Focus on flexibility and recovery</li>
-                                </ul>
-                            </div>
-                        )}
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-                            {days.map((day, idx) => (
-                                <DayCard key={day} day={day} dayName={dayNames[idx]} dayData={currentWeek[day]} />
-                            ))}
-                        </div>
-
-                        {data.history.length > 0 && (
-                            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                                <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-                                    <TrendingUp size={24} />
-                                    Progress History
-                                </h3>
-                                <div className="space-y-2">
-                                    {data.history.slice(-7).map((week, idx) => (
-                                        <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                                            <div>
-                                                <span className="font-semibold">Week {week.weekNumber}</span>
-                                                <span className="text-gray-600 ml-2 text-sm">
-                                                    {week.template === 'deload' ? '(Deload)' : `(${week.template.toUpperCase()})`}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-sm text-gray-600">{week.completedDays}/7</span>
-                                                <div className="w-24 bg-gray-200 rounded-full h-2">
-                                                    <div
-                                                        className="bg-green-500 h-2 rounded-full"
-                                                        style={{ width: `${(week.completedDays / 7) * 100}%` }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <h3 className="font-bold text-blue-900 mb-2">💡 Tips</h3>
-                            <ul className="text-sm text-blue-800 space-y-1">
-                                <li>• Progress saves automatically</li>
-                                <li>• Weeks 1-2: Upper/Lower Split</li>
-                                <li>• Weeks 3-4: Push/Pull/Legs</li>
-                                <li>• Weeks 5-6: High Variety</li>
-                                <li>• Week 7: Deload & Recovery</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        ReactDOM.render(<HotworxPlanner />, document.getElementById('root'));
-    </script>
-</body>
-</html>
+            const resetWeek = () => {
+                if
